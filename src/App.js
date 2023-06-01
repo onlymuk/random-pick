@@ -1,23 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import datas from "./data/cards.js";
+import BusinessCard from "./components/BusinessCard.js";
 
 function App() {
+  const [cards, setCards] = useState([]);
+  const [pickedCards, setPickedCards] = useState([]);
+
+  function draw() {
+    if (pickedCards.length > 2) {
+      const names = pickedCards.reduce((acc, cur) => {
+        return (acc = acc.concat(`${cur.name},`));
+      }, "");
+
+      alert(`당첨자는 ${names} 입니다.`);
+    }
+    const randomIdx = Math.floor(Math.random() * cards.length);
+    const randomItem = cards[randomIdx];
+
+    setCards(cards.filter((c) => c.phoneNumber !== randomItem.phoneNumber));
+
+    setPickedCards([...pickedCards, randomItem]);
+  }
+
+  useEffect(() => {
+    setCards(datas);
+  }, []);
+  console.log(cards);
+  console.log(pickedCards);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {cards.length > 0 && <button onClick={draw}>추첨하기</button>}
+      {pickedCards.length > 0 && (
+        <BusinessCard info={pickedCards[pickedCards.length - 1]} />
+      )}
     </div>
   );
 }
